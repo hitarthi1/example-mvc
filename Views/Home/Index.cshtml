@@ -1,0 +1,48 @@
+﻿
+@model MyViewModel
+
+<h1>Index</h1>
+<form method="post" asp-action="ProcessForm">
+    <input type="checkbox" name="fruit" value="apple" /> Apple<br />
+    <input type="checkbox" name="fruit" value="banana" /> Banana<br />
+    <input type="checkbox" name="fruit" value="orange" /> Orange<br />
+    <input type="submit" value="Submit" />
+</form>
+
+@using (Html.BeginForm("SubmitForm", "Home", FormMethod.Post, new { id = "my-form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name1)
+        @Html.TextBoxFor(model => model.Name1, new { @class = "form-control" })
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+}
+
+<div id="partial-view">
+@*    @Html.Partial("_MyPartialView", Model)
+*@  
+
+<partial name="_MyPartialView" model="@Model.PartialViewModel"/>
+</div>
+
+@section scripts {
+    <script>
+        $(function () {
+            $('#my-form').submit(function (event) {
+                event.preventDefault();
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: $(this).attr('method'),
+                    data: $(this).serialize(),
+                    success: function (result) {
+                        $('#partial-view').html(result);
+                    }
+                });
+            });
+        });
+    </script>
+}
